@@ -57,14 +57,14 @@ const Cart = () => {
             <div className='receive-container'>
               <span className='receive-label'>Receive: </span>
               <div class="progress-input receive-input" style={style1}>0</div>
-              <span class="gary-span backcolor">GARYS</span>
+              {/* <span class="gary-span backcolor">GARYS</span> */}
             </div>
 
 
             <button class="claim-button" scale="md" id="claim" disabled="" 
-            style={{"margin-top": "40px;"}}>BUY GARY</button>
+            style={{"margin-top": "40px;"}}>PAY</button>
 
-            <div class="equivalence backcolor"><span> 1 GARY = $0.0000001</span></div>
+            {/* <div class="equivalence backcolor"><span> 1 GARY = $0.0000001</span></div> */}
         </div>
     </div>
   )
