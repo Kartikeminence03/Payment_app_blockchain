@@ -24,19 +24,19 @@ const Cart = () => {
              <span className="gary-bold">$PAY</span>
             {" Presale Now"}
             </h2>
-            <h4>Stage 1</h4>
+            {/* <h4>Stage 1</h4>
             <div className='timer-container'>
-              {/* <div className='ends'>Ends in:</div>
+              <div className='ends'>Ends in:</div>
               <div className='timer-content'>
                 <CartTime duration={24*24*60*60*1000}/>
-              </div> */}
-            </div>
+              </div>
+            </div> */}
 
-            <div className='you-have-container'>
+            {/* <div className='you-have-container'>
               <span color="text" className="you-have-label"> You Have: </span>
               <div className="progress-input you-have-input" >0</div>
-              {/* <span className="gary-text gary-span">$GARYS</span> */}
-            </div>
+              <span className="gary-text gary-span">$GARYS</span>
+            </div> */}
 
             <div className="select-text backcolor">Select with which token/coin do you want to buy:</div>
             <div className='select-button-container'>
