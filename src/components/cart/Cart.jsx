@@ -63,6 +63,9 @@ const Cart = () => {
 
             <button class="claim-button" scale="md" id="claim" disabled="" 
             style={{"margin-top": "40px;"}}>PAY</button>
+            <a href='https://global-stg.transak.com/' target="_blank"
+        rel="noreferrer" class="claim-button" scale="md" id="claim" disabled="" 
+            style={{"margin-top": "40px;"}}>Buy To Card</a>
 
             {/* <div class="equivalence backcolor"><span> 1 GARY = $0.0000001</span></div> */}
         </div>
