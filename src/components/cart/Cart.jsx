@@ -38,7 +38,7 @@ const Cart = () => {
               <span className="gary-text gary-span">$GARYS</span>
             </div> */}
 
-            <div className="select-text backcolor">Select with which token/coin do you want to buy:</div>
+            {/* <div className="select-text backcolor">Select with which token/coin do you want to buy:</div> */}
             <div className='select-button-container'>
               <button className="claim-button select-button claim-button-active" scale="md" id="btn-eth"> ETH</button>
               <button className="claim-button select-button" scale="md" id="btn-usdt"> USDT</button>
