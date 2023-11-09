@@ -7,7 +7,7 @@ import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi/react'
 import { WagmiConfig } from 'wagmi'
 import { arbitrum, mainnet } from 'wagmi/chains'
 
-const projectId = '303fa3b40ae344b7b1183b74060591d9'
+const projectId = '60dbf16ffcda974a7ac01afc87477e54'
 
 // 2. Create wagmiConfig
 const metadata = {
@@ -37,6 +37,7 @@ const Navbar = () => {
     const account = ethers.utils.getAddress(accounts[0])
     setAccount(account)
   }
+  console.log(account,"======>>>>>>>");
 
   useEffect(()=>{
     loadBlockchainData()
