@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import "./Cart.css"
 
 const style ={
@@ -15,6 +15,11 @@ const style2 ={
 }
 
 const Cart = () => {
+  const [payInput, setPayInput] = useState('');
+
+  const payment_fun = (event)=>{
+    setPayInput(event.target.value)
+  };
   return (
     <div className='claim-container'>
         <div className='claim-content'>
@@ -32,7 +37,13 @@ const Cart = () => {
             <div className='pay-container'>
               <span className='pay-label'>Pay</span>
               <div style={style}>
-                <input scale="md" className="progress-input pay-input" id="pay-input" value="" style={{"visibility":"hidden;"}}/>
+                <input 
+                scale="md" 
+                className="progress-input pay-input" 
+                id="pay-input" 
+                onChange={payment_fun}
+                value={payInput} 
+                style={{"visibility":"hidden;"}}/>
               </div>
               <span className="eth-label">USDT</span>
             </div>
