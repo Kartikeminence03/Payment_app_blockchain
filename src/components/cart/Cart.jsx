@@ -10,15 +10,15 @@ const style1 ={
   width: "300px"
 }
 
-const style2 ={
-  visibility: "hidden",
-}
-
 const Cart = () => {
-  const [payInput, setPayInput] = useState('');
+  const [payInput, setPayInput] = useState();
+  const [tokenETH,setTokenETH] = useState()
 
   const payment_fun = (event)=>{
     setPayInput(event.target.value)
+    // console.log(typeof(parseInt(payInput)))
+    const payinput_inNum = parseInt(payInput);
+    setTokenETH(payinput_inNum/21)
   };
   return (
     <div className='claim-container'>
@@ -50,7 +50,7 @@ const Cart = () => {
 
             <div className='receive-container'>
               <span className='receive-label'>Receive: </span>
-              <div class="progress-input receive-input" style={style1}>0</div>
+              <div class="progress-input receive-input" style={style1}>ETH: {!payInput?0:tokenETH}</div>
               {/* <span class="gary-span backcolor">GARYS</span> */}
             </div>
 
