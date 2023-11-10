@@ -216,7 +216,7 @@
 .pay-input, .receive-input {
     display: inline-block;
     margin-right: 10px;
-    width: 40%;
+    width: 80%;
 }
 
 .claim-button-disabled, .progress-input {
