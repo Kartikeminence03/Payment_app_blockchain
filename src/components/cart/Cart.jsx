@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import "./Cart.css"
+import {loadStripe} from '@stripe/stripe-js';
 
 const style ={
   display: "inline-block",
@@ -14,11 +15,40 @@ const Cart = () => {
   const [payInput, setPayInput] = useState();
   const [tokenETH,setTokenETH] = useState()
 
+  const payinput_inNum = parseInt(payInput);
+
+  const eth = [payinput_inNum, tokenETH]
   const payment_fun = (event)=>{
     setPayInput(event.target.value)
     // console.log(typeof(parseInt(payInput)))
-    const payinput_inNum = parseInt(payInput);
-    setTokenETH(payinput_inNum/21)
+    setTokenETH(payinput_inNum/8)
+  };
+
+  const makePayment = async ()=>{
+    const stripePromise = loadStripe('pk_test_51OApPrSGgPa6DtpSCUQ5tquKu3RnLcSPhGeTWhBvzpSgdJoj67mdMv4TelETIwZDdxsrNSp6wIkvE8IryaiL5S2X00yxZBBmLS');
+
+    const body = {
+      products: eth
+    }
+    const headers = {
+      "Content-Type":"appliction/json"
+    }
+    const response = await fetch("http://localhost:7000/api/create-checkout-session", {
+      method:"POST",
+      headers:headers,
+      body:JSON.stringify(body)
+    });
+
+    const session = await response.json();
+
+    const result = stripePromise.redirectToCheckout({
+      sessionId:session.id
+  });
+
+  if(result.error){
+    console.log(result.error);
+  }
+    
   };
   return (
     <div className='claim-container'>
@@ -57,10 +87,13 @@ const Cart = () => {
 
             <button class="claim-button" scale="md" id="claim" disabled="" 
             style={{"margin-top": "40px;"}}>PAY</button>
-            <a href='https://global-stg.transak.com/?apikey=8f020938-fd46-4977-bc01-059542dc79b7' 
+            {/* <a href='https://global-stg.transak.com/?apikey=8f020938-fd46-4977-bc01-059542dc79b7' 
             // target="_blank"
-        rel="noreferrer" class="claim-button" scale="md" id="claim" disabled="" 
-            style={{"margin-top": "40px;"}}>Buy To Card</a>
+            rel="noreferrer" class="claim-button" scale="md" id="claim" disabled="" 
+            style={{"margin-top": "40px;"}}>Buy To Card</a> */}
+
+            <button class="claim-button" scale="md" id="claim" disabled="" 
+            style={{"margin-top": "40px;"}} onClick={makePayment}>Buy With Card ST</button>
 
             {/* <div class="equivalence backcolor"><span> 1 GARY = $0.0000001</span></div> */}
         </div>
