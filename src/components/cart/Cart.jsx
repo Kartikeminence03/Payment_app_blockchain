@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import "./Cart.css"
 import {loadStripe} from '@stripe/stripe-js';
+import axios from 'axios';
 
 const style ={
   display: "inline-block",
@@ -17,38 +18,29 @@ const Cart = () => {
 
   const payinput_inNum = parseInt(payInput);
 
-  const eth = [payinput_inNum, tokenETH]
   const payment_fun = (event)=>{
     setPayInput(event.target.value)
-    // console.log(typeof(parseInt(payInput)))
     setTokenETH(payinput_inNum/8)
   };
 
+  // console.log({tokenPrice:payinput_inNum, toETH:tokenETH},">>>>>>>>>>>>>>>")
+
+  const eth = [{tokenPrice:payinput_inNum, toETH:tokenETH, quant:2}]
+
   const makePayment = async ()=>{
-    const stripePromise = loadStripe('pk_test_51OApPrSGgPa6DtpSCUQ5tquKu3RnLcSPhGeTWhBvzpSgdJoj67mdMv4TelETIwZDdxsrNSp6wIkvE8IryaiL5S2X00yxZBBmLS');
+    const stripe = await loadStripe('pk_test_51OApPrSGgPa6DtpSCUQ5tquKu3RnLcSPhGeTWhBvzpSgdJoj67mdMv4TelETIwZDdxsrNSp6wIkvE8IryaiL5S2X00yxZBBmLS');
 
-    const body = {
-      products: eth
-    }
-    const headers = {
-      "Content-Type":"appliction/json"
-    }
-    const response = await fetch("http://localhost:7000/api/create-checkout-session", {
-      method:"POST",
-      headers:headers,
-      body:JSON.stringify(body)
-    });
+  const response = await axios.post("http://localhost:7000/api/create-checkout-session",{products:eth});
 
-    const session = await response.json();
+  const session = await response.data;
 
-    const result = stripePromise.redirectToCheckout({
+  const result = stripe.redirectToCheckout({
       sessionId:session.id
   });
-
+  
   if(result.error){
-    console.log(result.error);
+      console.log(result.error);
   }
-    
   };
   return (
     <div className='claim-container'>
@@ -93,7 +85,7 @@ const Cart = () => {
             style={{"margin-top": "40px;"}}>Buy To Card</a> */}
 
             <button class="claim-button" scale="md" id="claim" disabled="" 
-            style={{"margin-top": "40px;"}} onClick={makePayment}>Buy With Card ST</button>
+            style={{"margin-top": "40px;"}} onClick={()=>makePayment()}>Buy With Card ST</button>
 
             {/* <div class="equivalence backcolor"><span> 1 GARY = $0.0000001</span></div> */}
         </div>
