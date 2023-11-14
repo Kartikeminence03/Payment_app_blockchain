@@ -3,6 +3,7 @@ import "./Cart.css"
 import {loadStripe} from '@stripe/stripe-js';
 import axios from 'axios';
 import { ethers } from 'ethers'
+import { baseUrl } from '../../backend_Url/baseUrl';
 
 const style ={
   display: "inline-block",
@@ -43,7 +44,7 @@ const Cart = () => {
   const makePayment = async ()=>{
     const stripe = await loadStripe('pk_test_51OApPrSGgPa6DtpSCUQ5tquKu3RnLcSPhGeTWhBvzpSgdJoj67mdMv4TelETIwZDdxsrNSp6wIkvE8IryaiL5S2X00yxZBBmLS');
 
-  const response = await axios.post("https://gary-coin-payment-server-kartikeminence03.onrender.com/api/create-checkout-session",{products:eth});
+  const response = await axios.post(`${baseUrl}create-checkout-session`,{products:eth});
 
   const session = await response.data;
 
