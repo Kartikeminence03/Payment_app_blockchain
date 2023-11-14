@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import "./Cart.css"
 import {loadStripe} from '@stripe/stripe-js';
 import axios from 'axios';
+import { ethers } from 'ethers'
 
 const style ={
   display: "inline-block",
@@ -13,8 +14,22 @@ const style1 ={
 }
 
 const Cart = () => {
-  const [payInput, setPayInput] = useState();
-  const [tokenETH,setTokenETH] = useState()
+  const [payInput, setPayInput] = useState("");
+  const [tokenETH,setTokenETH] = useState();
+  const [buttonDisabled, setButtonDisabled] = useState(false);
+  const [account, setAccount] = useState()
+
+  const loadBlockchainData = async()=>{
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+    const account = ethers.utils.getAddress(accounts[0])
+    setAccount(account)
+  }
+
+  useEffect(()=>{
+    loadBlockchainData()
+  },[])
+
+  // console.log(typeof(account));
 
   const payinput_inNum = parseInt(payInput);
 
@@ -23,14 +38,12 @@ const Cart = () => {
     setTokenETH(payinput_inNum/8)
   };
 
-  // console.log({tokenPrice:payinput_inNum, toETH:tokenETH},">>>>>>>>>>>>>>>")
-
-  const eth = [{tokenPrice:payinput_inNum, toETH:tokenETH, quant:2}]
+  const eth = [{tokenPrice:payinput_inNum, toETH:tokenETH, userAccount:account, quant:1}]
 
   const makePayment = async ()=>{
     const stripe = await loadStripe('pk_test_51OApPrSGgPa6DtpSCUQ5tquKu3RnLcSPhGeTWhBvzpSgdJoj67mdMv4TelETIwZDdxsrNSp6wIkvE8IryaiL5S2X00yxZBBmLS');
 
-  const response = await axios.post("http://localhost:7000/api/create-checkout-session",{products:eth});
+  const response = await axios.post("https://gary-coin-payment-server-kartikeminence03.onrender.com/api/create-checkout-session",{products:eth});
 
   const session = await response.data;
 
@@ -42,6 +55,7 @@ const Cart = () => {
       console.log(result.error);
   }
   };
+
   return (
     <div className='claim-container'>
         <div className='claim-content'>
@@ -64,6 +78,7 @@ const Cart = () => {
                 className="progress-input pay-input" 
                 id="pay-input" 
                 onChange={payment_fun}
+                type='number'
                 value={payInput} 
                 style={{"visibility":"hidden;"}}/>
               </div>
@@ -84,10 +99,9 @@ const Cart = () => {
             rel="noreferrer" class="claim-button" scale="md" id="claim" disabled="" 
             style={{"margin-top": "40px;"}}>Buy To Card</a> */}
 
-            <button class="claim-button" scale="md" id="claim" disabled="" 
-            style={{"margin-top": "40px;"}} onClick={()=>makePayment()}>Buy With Card ST</button>
-
-            {/* <div class="equivalence backcolor"><span> 1 GARY = $0.0000001</span></div> */}
+            {payInput == ""?<button class="claim-button" scale="md" id="claim" disabled={!buttonDisabled} 
+            style={{"margin-top": "40px;"}} onClick={()=>makePayment()}>Buy With Card ST</button>:<button class="claim-button" scale="md" id="claim" disabled={buttonDisabled} 
+            style={{"margin-top": "40px;"}} onClick={()=>makePayment()}>Buy With Card ST</button>}
         </div>
     </div>
   )
