@@ -213,10 +213,27 @@
     margin-right: 10px;
 }
 
+.pay-label1, .receive-label {
+    text-align: right;
+    width: 140px;
+    color: var(--main-text);
+}
+
+.pay-label1, .receive-label, .select-button, .you-have-label {
+    display: inline-block;
+    margin-right: 10px;
+}
+
 .pay-input, .receive-input {
     display: inline-block;
     margin-right: 10px;
     width: 80%;
+}
+
+.pay-input1, .receive-input {
+    display: inline-block;
+    margin-right: 10px;
+    width: 90%;
 }
 
 .claim-button-disabled, .progress-input {
@@ -224,19 +241,6 @@
     font-weight: 600;
     outline: 0;
 }
-
-/* .progress-input {
-    background-color: var(--input-back);
-    border: 2px solid var(--main-text);
-    border-radius: 8px;
-    color: var(--main-text);
-    display: block;
-    margin-top: 22px;
-    padding: 5px 0 5px 20px;
-    text-align: left;
-    transition: all .3s ease 0s;
-    width: 75%;
-} */
 
 .max-button {
     border: 1px solid var(--main-text);
