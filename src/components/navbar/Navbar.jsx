@@ -10,12 +10,12 @@ const Navbar = () => {
 
   const loadBlockchainData = async()=>{
     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
-    const account = ethers.utils.getAddress(accounts[0])
+    const account = ethers.getAddress(accounts[0])
     setAccount(account)
   }
 
   useEffect(()=>{
-    loadBlockchainData()
+    // loadBlockchainData()
   },[])
 
   const handleShowNavbar = () => {
