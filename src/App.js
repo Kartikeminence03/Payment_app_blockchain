@@ -6,6 +6,7 @@ import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi/react'
 
 import { WagmiConfig } from 'wagmi'
 import { arbitrum, mainnet } from 'wagmi/chains'
+import About from './pages/about/About';
 
 const projectId = '60dbf16ffcda974a7ac01afc87477e54'
 
@@ -37,6 +38,7 @@ function App() {
         </WagmiConfig>
         <Routes>
           <Route path='/' element={<Home/>}/>
+          <Route path='/about' element={<About/>}/>
         </Routes>
       </div>
     </Router>

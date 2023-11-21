@@ -1,7 +1,6 @@
 import React from 'react'
 import Cart from '../../components/cart/Cart'
 import './Home.css'
-import About from '../../components/About'
 
 const Home = () => {
   return (
