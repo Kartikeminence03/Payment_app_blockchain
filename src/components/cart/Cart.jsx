@@ -38,60 +38,88 @@ const Cart = () => {
 
   const loadBlockchainData = async()=>{
     const provider = new ethers.BrowserProvider(window.ethereum);
-    // console.log(await provider?.getSigner(),"-----.....>>>>>>>>>");
     setProvider(provider);
-    // const network = await provider.getNetwork();
-    // console.log('provider', network.name);
-    // setTokenYouGet(tokenYouGetInNum)
-
-
-    // const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
-    // const account = ethers.getAddress(accounts[0])
-    // setMetaAccount(account)
   }
+
+  const getTokenAmount = async (payInput, getTokenFunction) => {
+    try {
+      const signer = await provider.getSigner();
+      // const inputpay = Number(payInput) * 10 ** 6;
+  
+      const tokenPresaleContract = new ethers.Contract(
+        tokenPresaleaddress,
+        tokenPresale.abi,
+        provider
+      );
+  
+      const tokenPresaleContractWithSigner = tokenPresaleContract.connect(signer);
+      const RecieveTokens = await getTokenFunction(tokenPresaleContractWithSigner, payInput.toString());
+      setTokenETH(Number(RecieveTokens) / 10 ** 18);
+    } catch (err) {
+      console.log(err);
+    }
+  };
   
 
 
   const ethToken = async ()=>{
-    try{
-      const signer = await provider.getSigner();
-      const inputpay = document.getElementById("pay-input").value;
-      const payDsoulETH = Number(inputpay)*10**18;
-      // console.log("ETH");
-      const tokenPresaleContract = new ethers.Contract(tokenPresaleaddress, tokenPresale.abi, provider)
-      const tokenPresaleContractWithSigner = tokenPresaleContract.connect(signer);
-      const RecieveTokens = await tokenPresaleContractWithSigner.getTokenAmountForEth(payDsoulETH.toString());
-      const recieveToken_inNum = parseInt(RecieveTokens)
-      const RecieveTokens1 = recieveToken_inNum/10**18;
-      setTokenETH( RecieveTokens1);
-    } catch(err) {
-      console.log(err);
-    }
+    const inputpay = await document.getElementById("pay-input")?.value;
+    const payDsoulETH = Number(inputpay) * 10 ** 18;
+    await getTokenAmount(payDsoulETH, async (contract, payValue) => {
+      return contract.getTokenAmountForEth(payValue);
+    });
 
 
   };
 
   const usdtToken =async ()=>{
     // console.log("USDT");
-    const signer = await provider.getSigner();
-    const inputpay = document.getElementById("pay-input").value;
-    const payDsoulUSDT = Number(inputpay*10**6)
-    const tokenPresaleContract = new ethers.Contract(tokenPresaleaddress, tokenPresale.abi, provider)
-    const tokenPresaleContractWithSigner = tokenPresaleContract.connect(signer);
-    const RecieveTokens = await tokenPresaleContractWithSigner.getTokenAmountForUsdt(payDsoulUSDT.toString());
-    setTokenETH(Number(RecieveTokens)/10**18);
+    const inputpay = document.getElementById("pay-input")?.value;
+    const payDsoulUSDT = Number(inputpay) * 10 ** 6;
+    await getTokenAmount(payDsoulUSDT, async (contract, payValue) => {
+      return contract.getTokenAmountForUsdt(payValue);
+    });
   };
 
 
   const usdcToken = async()=>{
     // console.log("USDC");
-    const signer = await provider.getSigner();
-    const inputpay = document.getElementById("pay-input").value;
-    const payDsoulUSDT = Number(inputpay*10**6)
-    const tokenPresaleContract = new ethers.Contract(tokenPresaleaddress, tokenPresale.abi, provider)
-    const tokenPresaleContractWithSigner = tokenPresaleContract.connect(signer);
-    const RecieveTokens = await tokenPresaleContractWithSigner.getTokenAmountForUsdc(payDsoulUSDT.toString());
-    setTokenETH(Number(RecieveTokens)/10**18);
+    const inputpay = document.getElementById("pay-input")?.value;
+    const payDsoulUSDC = Number(inputpay) * 10 ** 6;
+    await getTokenAmount(payDsoulUSDC, async (contract, payValue) => {
+      return contract.getTokenAmountForUsdc(payValue);
+    });
+  };
+
+
+
+  const payWithToken = async (tokenSymbol, allowanceContractAddress, allowanceAbi, buyFunction) => {
+    try {
+      console.log(tokenSymbol);
+      const signer = await provider.getSigner();
+      const inputpay = document.getElementById("pay-input")?.value;
+      const payAmount = Number(inputpay) * 10 ** 6;
+  
+      const tokenPresaleContract = new ethers.Contract(tokenPresaleaddress, tokenPresale.abi, provider);
+      const tokenPresaleContractWithSigner = tokenPresaleContract.connect(signer);
+  
+      const allowanceContract = new ethers.Contract(allowanceContractAddress, allowanceAbi, provider);
+      const allowanceContractWithSigner = allowanceContract.connect(signer);
+  
+      let allowanceToPresale = await allowanceContractWithSigner.allowance(signer.address, tokenPresaleaddress);
+  
+      if (allowanceToPresale < payAmount) {
+        const approve = await allowanceContractWithSigner.approve(tokenPresaleaddress, payAmount - Number(allowanceToPresale));
+        const approveReceipt = await approve.wait();
+      }
+  
+      allowanceToPresale = await allowanceContractWithSigner.allowance(signer.address, tokenPresaleaddress);
+  
+      const buy = await buyFunction(tokenPresaleContractWithSigner, payAmount);
+      const buyReceipt = await buy.wait();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
 
@@ -107,86 +135,49 @@ const Cart = () => {
     const buy =  await tokenPresaleContractWithSigner.buyWithEth({value: payDsoulETH.toString()});
     const buyReciept = await buy.wait();
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
   };
 
-  const payWithUSDT = async ()=>{
-    console.log("USDT");
-    try {
-      const signer = await provider.getSigner();
-    const inputpay = document.getElementById("pay-input").value;
-    const payDsoulUSDT = Number(inputpay*10**6)
-    const tokenPresaleContract = new ethers.Contract(tokenPresaleaddress, tokenPresale.abi, provider);
-    const tokenPresaleContractWithSigner = tokenPresaleContract.connect(signer);
-    const usdtContract = new ethers.Contract(process.env.REACT_APP_USDTALLOWANCE,usdtAbi, provider);
-    const usdtContractWithSigner = usdtContract.connect(signer);
 
-    let usdtAllowanceToPresale = await usdtContractWithSigner.allowance(signer.address, tokenPresaleaddress);
-
-    if (usdtAllowanceToPresale < payDsoulUSDT) {
-      const approve = await usdtContractWithSigner.approve(tokenPresaleaddress, payDsoulUSDT - Number(usdtAllowanceToPresale))
-      const approveReceipt = await approve.wait();
-    }
-
-    usdtAllowanceToPresale = await usdtContractWithSigner.allowance(signer.address, tokenPresaleaddress);
-
-    const buy = await tokenPresaleContractWithSigner.buyWithUsdt(payDsoulUSDT);
-    const buyReciept = await buy.wait();
-    } catch (error) {
-      console.log(error)
-    }
+  const payWithUSDT = async () => {
+    const usdtAllowanceContractAddress = process.env.REACT_APP_USDTALLOWANCE;
+    const usdtAllowanceAbi = usdtAbi;
+    await payWithToken("USDT", usdtAllowanceContractAddress, usdtAllowanceAbi, async (contract, amount) => {
+      return contract.buyWithUsdt(amount);
+    });
   };
 
-  const payWithUSDC = async ()=>{
-    try {
-      const signer = await provider.getSigner();
-    const inputpay = document.getElementById("pay-input").value;
-    const payDsoulUSDT = Number(inputpay*10**6)
-    const tokenPresaleContract = new ethers.Contract(tokenPresaleaddress, tokenPresale.abi, provider);
-    const tokenPresaleContractWithSigner = tokenPresaleContract.connect(signer);
-    const usdcContract = new ethers.Contract(process.env.REACT_APP_USDCALLOWANCE,usdcAbi, provider);
-    const usdcContractWithSigner = usdcContract.connect(signer);
-
-    let usdcAllowanceToPresale = await usdcContractWithSigner.allowance(signer.address, tokenPresaleaddress);
-
-    if (usdcAllowanceToPresale < payDsoulUSDT) {
-      const approve = await usdcContractWithSigner.approve(tokenPresaleaddress, payDsoulUSDT - Number(usdcAllowanceToPresale))
-      const approveReceipt = await approve.wait();
-    }
-
-    usdcAllowanceToPresale = await usdcContractWithSigner.allowance(signer.address, tokenPresaleaddress);
-
-    const buy = await tokenPresaleContractWithSigner.buyWithUsdc(payDsoulUSDT);
-    const buyReciept = await buy.wait();
-    } catch (error) {
-      console.log(error);
-    }
+  const payWithUSDC = async () => {
+    const usdcAllowanceContractAddress = process.env.REACT_APP_USDCALLOWANCE;
+    const usdcAllowanceAbi = usdcAbi;
+    await payWithToken("USDC", usdcAllowanceContractAddress, usdcAllowanceAbi, async (contract, amount) => {
+      return contract.buyWithUsdc(amount);
+    });
   };
 
-  const claimTokensButton = async ()=>{
+
+  const executeClaimAction = async (actionFunction, actionToken) => {
     try {
       const signer = await provider.getSigner();
       const tokenPresaleContract = new ethers.Contract(tokenPresaleaddress, tokenPresale.abi, provider);
       const tokenPresaleContractWithSigner = tokenPresaleContract.connect(signer);
-      const buy =  await tokenPresaleContractWithSigner.claimTokens(claimToken);
-      const buyReciept = await buy.wait();
+  
+      const claimAction = await actionFunction(tokenPresaleContractWithSigner, actionToken);
+      const claimReceipt = await claimAction.wait();
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
-  const claimRefundButton = async ()=>{
-    try {
-      const signer = await provider.getSigner();
-      const tokenPresaleContract = new ethers.Contract(tokenPresaleaddress, tokenPresale.abi, provider);
-      const tokenPresaleContractWithSigner = tokenPresaleContract.connect(signer);
-      const buy =  await tokenPresaleContractWithSigner.claimRefund(refundToken);
-      const buyReciept = await buy.wait();
-    } catch (error) {
-      console.log(error);
-    }
-  }
+
+  const claimTokensButton = async () => {
+    await executeClaimAction((contract, token) => contract.claimTokens(token), claimToken);
+  };
+  
+  const claimRefundButton = async () => {
+    await executeClaimAction((contract, token) => contract.claimRefund(token), refundToken);
+  };
 
   const pay_with_meta = ()=>{
     if(currencys==="ETH"){
