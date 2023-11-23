@@ -1,13 +1,14 @@
+/* global BigInt */
 import React, { useEffect, useState } from 'react'
 import "./Cart.css"
 import {loadStripe} from '@stripe/stripe-js';
 import axios from 'axios';
 import { ethers } from 'ethers'
 import { baseUrl } from '../../backend_Url/baseUrl';
-import digiSoul from '../../abi/DigiSoul.json';
 import tokenPresale from '../../abi/TokenPreSale.json';
 import usdtAbi from '../../abi/usdt.json';
 import usdcAbi from '../../abi/usdc.json'
+// import CartTime from './CartTime';
 
 const style ={
   display: "inline-block",
@@ -26,8 +27,8 @@ const Cart = () => {
   const [account, setAccount] = useState("");
   const [refundToken, setRefundToken] = useState("");
   const [claimToken, setClaimToken] = useState("");
-  const [metaAccount, setMetaAccount] = useState(null);
   const [currencys, setCurrencys] = useState("ETH");
+  const [errorMessage,setErrorMessage] = useState("")
 
   const tokenPresaleaddress = process.env.REACT_APP_TOKENPRESALEADDRESS;
   // const inputpay = document.getElementById("pay-input").value;
@@ -39,8 +40,12 @@ const Cart = () => {
   const loadBlockchainData = async()=>{
     const provider = new ethers.BrowserProvider(window.ethereum);
     setProvider(provider);
+    // const network = await provider.getSigner();
+    // console.log('provider', network);
   }
 
+
+  //! Get token amount
   const getTokenAmount = async (payInput, getTokenFunction) => {
     try {
       const signer = await provider.getSigner();
@@ -53,25 +58,25 @@ const Cart = () => {
       );
   
       const tokenPresaleContractWithSigner = tokenPresaleContract.connect(signer);
-      const RecieveTokens = await getTokenFunction(tokenPresaleContractWithSigner, payInput.toString());
+      const RecieveTokens = await getTokenFunction(tokenPresaleContractWithSigner, BigInt(payInput).toString());
       setTokenETH(Number(RecieveTokens) / 10 ** 18);
     } catch (err) {
-      console.log(err);
+      console.error(err,"----->>>>>>");
     }
   };
   
 
-
+  //*Get token with ETh
   const ethToken = async ()=>{
     const inputpay = await document.getElementById("pay-input")?.value;
     const payDsoulETH = Number(inputpay) * 10 ** 18;
     await getTokenAmount(payDsoulETH, async (contract, payValue) => {
       return contract.getTokenAmountForEth(payValue);
-    });
-
-
+    })
   };
 
+
+  //*Get token with USDT
   const usdtToken =async ()=>{
     // console.log("USDT");
     const inputpay = document.getElementById("pay-input")?.value;
@@ -82,6 +87,7 @@ const Cart = () => {
   };
 
 
+  //*Get token with USDC
   const usdcToken = async()=>{
     // console.log("USDC");
     const inputpay = document.getElementById("pay-input")?.value;
@@ -92,7 +98,7 @@ const Cart = () => {
   };
 
 
-
+  //!Pay for token
   const payWithToken = async (tokenSymbol, allowanceContractAddress, allowanceAbi, buyFunction) => {
     try {
       console.log(tokenSymbol);
@@ -207,7 +213,7 @@ const Cart = () => {
     const fiatPay = Number(inputpay)
     setPayInput(fiatPay)
   };
-
+  
   const account_id = (event)=>{
     setAccount(event.target.value)
   };
@@ -246,6 +252,8 @@ const Cart = () => {
              <span className="gary-bold">$PAY</span>
             {" Presale Now"}
             </h2>
+            {/* <CartTime/> */}
+            {!errorMessage === "" ? errorMessage:""}
             <div className='select-button-container'>
               <button className="claim-button select-button claim-button-active" scale="md" id="btn-eth" onClick={()=>setCurrencys("ETH")}> ETH</button>
               <button className="claim-button select-button" scale="md" id="btn-usdt" onClick={()=>setCurrencys("USDT")}> USDT</button>

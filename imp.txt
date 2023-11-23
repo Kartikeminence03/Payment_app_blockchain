@@ -88,8 +88,6 @@ const Cart = () => {
     } catch(err) {
       console.log(err);
     }
-
-
   };
 
   const usdtToken =async ()=>{
@@ -368,3 +366,52 @@ const Cart = () => {
 }
 
 export default Cart
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const payment_fun = async (event) => {
+    let inputpay = event.target.value;
+  
+    if (!isNaN(inputpay)) {
+      const fiatPay = Number(inputpay);
+  
+      const maxLengthETH = 3;
+      const maxLengthUSDT = 11;
+  
+      if (inputpay.length > maxLengthETH && currencys==="ETH") {
+        inputpay = inputpay.slice(0, maxLengthETH);
+      } else if(inputpay.length > maxLengthUSDT && currencys==="USDT"){
+        inputpay = inputpay.slice(0, maxLengthUSDT);
+      }
+  
+      setPayInput(inputpay);
+    } else {
+      // Handle the case where the entered value is not a number
+      // You may want to show an error message or handle it based on your requirements
+      console.error("Invalid input. Please enter a number.");
+    }
+  };
+
+
+
+  <div style={style}>
+                <input 
+                scale="md" 
+                className="progress-input pay-input" 
+                onChange={payment_fun}
+                id="pay-input" 
+                type='number'
+                value={payInput} 
+                style={{"visibility":"hidden;"}}/>
+              </div>
