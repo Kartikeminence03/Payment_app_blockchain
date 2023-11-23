@@ -31,17 +31,18 @@ const Cart = () => {
   const [errorMessage,setErrorMessage] = useState("")
 
   const tokenPresaleaddress = process.env.REACT_APP_TOKENPRESALEADDRESS;
-  // const inputpay = document.getElementById("pay-input").value;
-  // const payinput_inNum = 1;
-  // const payDsoulETH = payinput_inNum*10**18;
-  // const payDsoulUSDT = payinput_inNum*10**6;
-  // console.log(typeof payinput_inNum)
 
   const loadBlockchainData = async()=>{
     const provider = new ethers.BrowserProvider(window.ethereum);
     setProvider(provider);
-    // const network = await provider.getSigner();
-    // console.log('provider', network);
+    const network = await provider.getNetwork();
+
+    if(network.name==="goerli"){
+      console.log("connected");
+    } else{
+      alert("pls connect Goerli network")
+    }
+    console.log('provider', network.name);
   }
 
 
