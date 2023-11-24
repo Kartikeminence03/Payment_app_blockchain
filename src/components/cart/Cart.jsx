@@ -44,7 +44,8 @@ const Cart = () => {
 
   //! Get token amount
   const getTokenAmount = async (payInput, getTokenFunction) => {
-    try {
+    try {if(provider){
+
       const signer = await provider.getSigner();
       // const inputpay = Number(payInput) * 10 ** 6;
   
@@ -57,6 +58,7 @@ const Cart = () => {
       const tokenPresaleContractWithSigner = tokenPresaleContract.connect(signer);
       const RecieveTokens = await getTokenFunction(tokenPresaleContractWithSigner, BigInt(payInput).toString());
       setTokenETH(Number(RecieveTokens) / 10 ** 18);
+    }
     } catch (err) {
       console.error(err,"----->>>>>>");
     }
@@ -194,6 +196,13 @@ const Cart = () => {
     }
   }
 
+    
+    
+  useEffect(()=>{
+    // if(!metaAccount) return 
+    loadBlockchainData()
+  },[])
+
     if(currencys==="ETH"){
       ethToken()
     } else if(currencys==="USDT"){
@@ -201,24 +210,6 @@ const Cart = () => {
     } else{
       usdcToken()
     }
-
-    // const ethFun = (a)=> {
-    //   ethToken()
-    //   setCurrencys(a)
-    // }
-    // const usdtFun = (a)=> {
-    //   usdtToken()
-    //   setCurrencys(a)
-    // }
-    // const usdcFun = (a)=> {
-    //   usdcToken()
-    //   setCurrencys(a)
-    // }
-
-  useEffect(()=>{
-    // if(!metaAccount) return 
-    loadBlockchainData()
-  },[])
 
   const payment_fun = async(event)=>{
     const inputpay = document.getElementById("pay-input").value;
