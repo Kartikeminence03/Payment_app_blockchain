@@ -28,7 +28,7 @@ const Cart = () => {
   const [refundToken, setRefundToken] = useState("");
   const [claimToken, setClaimToken] = useState("");
   const [currencys, setCurrencys] = useState("ETH");
-  const [errorMessage,setErrorMessage] = useState("")
+  const [errorMessage,setErrorMessage] = useState("");
 
   const tokenPresaleaddress = process.env.REACT_APP_TOKENPRESALEADDRESS;
 
@@ -36,14 +36,10 @@ const Cart = () => {
     const provider = new ethers.BrowserProvider(window.ethereum);
     setProvider(provider);
     const network = await provider.getNetwork();
-
-    if(network.name==="goerli"){
-      console.log("connected");
-    } else{
-      alert("pls connect Goerli network")
-    }
-    console.log('provider', network.name);
+    const goer = network.name==="goerli";
   }
+
+  const goerliNetwork = async ()=>{};
 
 
   //! Get token amount
@@ -186,6 +182,8 @@ const Cart = () => {
     await executeClaimAction((contract, token) => contract.claimRefund(token), refundToken);
   };
 
+
+  //Pay for token with blockchain
   const pay_with_meta = ()=>{
     if(currencys==="ETH"){
       payWithETH()
@@ -203,6 +201,19 @@ const Cart = () => {
     } else{
       usdcToken()
     }
+
+    // const ethFun = (a)=> {
+    //   ethToken()
+    //   setCurrencys(a)
+    // }
+    // const usdtFun = (a)=> {
+    //   usdtToken()
+    //   setCurrencys(a)
+    // }
+    // const usdcFun = (a)=> {
+    //   usdcToken()
+    //   setCurrencys(a)
+    // }
 
   useEffect(()=>{
     // if(!metaAccount) return 
@@ -232,17 +243,17 @@ const Cart = () => {
   const makePayment = async ()=>{
     const stripe = await loadStripe(process.env.REACT_APP_STRIPE_PK_TEST);
 
-  const response = await axios.post(`${baseUrl}create-checkout-session`,{products:eth});
+    const response = await axios.post(`${baseUrl}create-checkout-session`,{products:eth});
 
-  const session = await response.data;
+    const session = await response.data;
 
-  const result = stripe.redirectToCheckout({
-      sessionId:session.id
-  });
+    const result = stripe.redirectToCheckout({
+        sessionId:session.id
+    });
   
-  if(result.error){
-      console.log(result.error);
-  }
+    if(result.error){
+        console.log(result.error);
+    }
   };
 
   return (
@@ -271,7 +282,8 @@ const Cart = () => {
                 id="pay-input" 
                 type='number'
                 value={payInput} 
-                style={{"visibility":"hidden;"}}/>
+                // style={{"visibility":"hidden;"}}
+                />
               </div>
               <span className="eth-label">{currencys}</span>
             </div>
@@ -300,7 +312,8 @@ const Cart = () => {
                 onChange={account_id}
                 type='text'
                 value={account} 
-                style={{"visibility":"hidden;"}}/>
+                // style={{"visibility":"hidden;"}}
+                />
               </div>
             </div>
 
@@ -319,7 +332,8 @@ const Cart = () => {
                   onChange={claim_token}
                   type='text'
                   value={claimToken} 
-                  style={{"visibility":"hidden;"}}/>
+                  // style={{"visibility":"hidden;"}}
+                  />
               </div>
             </div>
             <button className="claim-button" scale="md" id="claim" disabled={buttonDisabled}
@@ -336,7 +350,8 @@ const Cart = () => {
                 onChange={refund_token}
                 type='text'
                 value={refundToken} 
-                style={{"visibility":"hidden;"}}/>
+                // style={{"visibility":"hidden;"}}
+                />
               </div>
             </div>
             <button className="claim-button" scale="md" id="claim" disabled={buttonDisabled} 
