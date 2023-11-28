@@ -376,10 +376,6 @@ export default Cart
 
 
 
-
-
-
-
 const payment_fun = async (event) => {
     let inputpay = event.target.value;
   

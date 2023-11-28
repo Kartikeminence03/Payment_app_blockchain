@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import "./Cart.css"
 
-const CartTime = ({duration}) => {
+const CartTime = ({startTime,endTime}) => {
   // const [time,setTime] = useState(duration);
+  // console.log(startTime,endTime,"====....");
+  let bigToNum = Number(startTime);
+  let stt = new Date(bigToNum)
+  console.log(stt,"===>>>");
 
   // useEffect(()=>{
   //   setTimeout(()=>{
@@ -25,7 +29,8 @@ const CartTime = ({duration}) => {
 
   return (
     // <div className='utc-date'>{getTmie(time)}</div>
-    <div></div>
+    // <div>{startTime}</div>
+    <></>
   )
 }
 

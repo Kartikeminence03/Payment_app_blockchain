@@ -8,7 +8,8 @@ import { baseUrl } from '../../backend_Url/baseUrl';
 import tokenPresale from '../../abi/TokenPreSale.json';
 import usdtAbi from '../../abi/usdt.json';
 import usdcAbi from '../../abi/usdc.json'
-// import CartTime from './CartTime';
+import { toast } from 'react-toastify';
+import CartTime from './CartTime';
 
 const style ={
   display: "inline-block",
@@ -29,6 +30,8 @@ const Cart = () => {
   const [claimToken, setClaimToken] = useState("");
   const [currencys, setCurrencys] = useState("ETH");
   const [errorMessage,setErrorMessage] = useState("");
+  const [startPresaleTime,setStartPresaleTime] = useState(0)
+  const [endPresaleTime,setEndPresaleTime] = useState(0)
 
   const tokenPresaleaddress = process.env.REACT_APP_TOKENPRESALEADDRESS;
 
@@ -38,9 +41,6 @@ const Cart = () => {
     const network = await provider.getNetwork();
     const goer = network.name==="goerli";
   }
-
-  const goerliNetwork = async ()=>{};
-
 
   //! Get token amount
   const getTokenAmount = async (payInput, getTokenFunction) => {
@@ -65,7 +65,7 @@ const Cart = () => {
   };
   
 
-  //*Get token with ETh
+  //* Get token with ETh
   const ethToken = async ()=>{
     const inputpay = await document.getElementById("pay-input")?.value;
     const payDsoulETH = Number(inputpay) * 10 ** 18;
@@ -123,10 +123,32 @@ const Cart = () => {
       const buy = await buyFunction(tokenPresaleContractWithSigner, payAmount);
       const buyReceipt = await buy.wait();
     } catch (error) {
-      console.error(error);
+      // console.error(error.message);
+      let err  = error.message;
+      let err1 = err.slice(21,44)
+      // console.log(err1);
+      if(err1){
+        toast.error(err1)
+        setButtonDisabled(true)
+      }
     }
   };
 
+  const bytokenTime = async ()=>{
+    try {
+      const signer = await provider.getSigner();
+      const tokenPresaleContract = new ethers.Contract(tokenPresaleaddress, tokenPresale.abi, provider);
+      const tokenPresaleContractWithSigner = tokenPresaleContract.connect(signer);
+      const RecieveTime = await tokenPresaleContractWithSigner.presale(1)
+      const startTime = RecieveTime[0];
+      const endTime = RecieveTime[1];
+      setStartPresaleTime(startTime);
+      setEndPresaleTime(endTime)
+      // console.log(RecieveTime[0],"====>>>>");
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
 
   const payWithETH = async ()=>{
@@ -140,7 +162,17 @@ const Cart = () => {
     const buy =  await tokenPresaleContractWithSigner.buyWithEth({value: payDsoulETH.toString()});
     const buyReciept = await buy.wait();
     } catch (error) {
-      console.error(error)
+      // console.error(error.message,"=====>>>>")
+      let err  = error.message;
+      let err1 = err.slice(0,18)
+      let err2 = err.slice(21,44)
+      if(err1=="insufficient funds"){
+        toast.error(err1)
+        setButtonDisabled(true)
+      } else{
+        toast.error(err2)
+        setButtonDisabled(true)
+      }
     }
   };
 
@@ -171,7 +203,7 @@ const Cart = () => {
       const claimAction = await actionFunction(tokenPresaleContractWithSigner, actionToken);
       const claimReceipt = await claimAction.wait();
     } catch (error) {
-      console.log(error);
+      console.log(error,);
     }
   };
 
@@ -195,11 +227,8 @@ const Cart = () => {
       payWithUSDC()
     }
   }
-
-    
     
   useEffect(()=>{
-    // if(!metaAccount) return 
     loadBlockchainData()
   },[])
 
@@ -229,22 +258,24 @@ const Cart = () => {
     setClaimToken(event.target.value)
   }
 
-  const eth = [{tokenPrice:payInput, toETH:tokenETH, userAccount:account, quant:1}]
+  const eth = [{tokenPrice:payInput, crypto:currencys, toETH:tokenETH, userAccount:account, quant:1}]
 
   const makePayment = async ()=>{
-    const stripe = await loadStripe(process.env.REACT_APP_STRIPE_PK_TEST);
+    // const stripe = await loadStripe(process.env.REACT_APP_STRIPE_PK_TEST);
+    bytokenTime()
 
-    const response = await axios.post(`${baseUrl}create-checkout-session`,{products:eth});
+    // const response = await axios.post(`${baseUrl}create-checkout-session`,{products:eth});
 
-    const session = await response.data;
+    // const session = await response.data;
+    // // console.log(session);
 
-    const result = stripe.redirectToCheckout({
-        sessionId:session.id
-    });
+    // const result = stripe.redirectToCheckout({
+    //     sessionId:session.id,
+    // });
   
-    if(result.error){
-        console.log(result.error);
-    }
+    // if(result.error){
+    //     console.log(result.error);
+    // }
   };
 
   return (
@@ -253,9 +284,12 @@ const Cart = () => {
             <h2 className='claim-title'>
             {"Join the "}
              <span className="gary-bold">$PAY</span>
-            {" Presale Now"}
+            {/* {" Presale Now"} */}
+            {/* {startPresaleTime && startPresaleTime } */}
+            {/* <p>{startPresaleTime}</p> */}
             </h2>
-            {/* <CartTime/> */}
+            {/* {endPresaleTime} */}
+            <CartTime startTime={startPresaleTime} endTime={endPresaleTime}/>
             {!errorMessage === "" ? errorMessage:""}
             <div className='select-button-container'>
               <button className="claim-button select-button claim-button-active" scale="md" id="btn-eth" onClick={()=>setCurrencys("ETH")}> ETH</button>
