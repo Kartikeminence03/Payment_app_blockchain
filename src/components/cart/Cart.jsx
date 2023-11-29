@@ -34,6 +34,7 @@ const Cart = () => {
   const [endPresaleTime,setEndPresaleTime] = useState(0)
 
   const tokenPresaleaddress = process.env.REACT_APP_TOKENPRESALEADDRESS;
+  const currentTime = new Date()
 
   const loadBlockchainData = async()=>{
     const provider = new ethers.BrowserProvider(window.ethereum);
@@ -134,6 +135,7 @@ const Cart = () => {
     }
   };
 
+  ////*Buy Presale Time function
   const bytokenTime = async ()=>{
     try {
       const signer = await provider.getSigner();
@@ -148,7 +150,14 @@ const Cart = () => {
     } catch (error) {
       console.error(error)
     }
-  }
+  };
+
+  ////*Buy Presale Time variable
+  let bigToNumST = Number(startPresaleTime);
+  let bigToNumED = Number(endPresaleTime);
+  let stt = new Date(bigToNumST*1000)
+  let edt = new Date(bigToNumED*1000)
+  ////*Buy Presale Time variable
 
 
   const payWithETH = async ()=>{
@@ -159,7 +168,7 @@ const Cart = () => {
     const payDsoulETH = Number(inputpay)*10**18;
     const tokenPresaleContract = new ethers.Contract(tokenPresaleaddress, tokenPresale.abi, provider);
     const tokenPresaleContractWithSigner = tokenPresaleContract.connect(signer);
-    const buy =  await tokenPresaleContractWithSigner.buyWithEth({value: payDsoulETH.toString()});
+    const buy =  await tokenPresaleContractWithSigner.buyWithEth({value: BigInt(payDsoulETH).toString()});
     const buyReciept = await buy.wait();
     } catch (error) {
       // console.error(error.message,"=====>>>>")
@@ -217,16 +226,38 @@ const Cart = () => {
   };
 
 
-  //Pay for token with blockchain
+  //*Pay for token with blockchain
   const pay_with_meta = ()=>{
     if(currencys==="ETH"){
       payWithETH()
+      setButtonDisabled(false)
     } else if(currencys==="USDT"){
       payWithUSDT()
+      setButtonDisabled(false)
     } else{
       payWithUSDC()
+      setButtonDisabled(false)
     }
   }
+
+  //!Presale Time
+  useEffect(()=>{
+    setTimeout(()=>{
+      bytokenTime()
+      if(currentTime<stt){
+        setButtonDisabled(true)
+        setErrorMessage("Presale is not start")
+      } else if(currentTime>edt){
+        setButtonDisabled(true)
+        setErrorMessage("Presale is end")
+      } else{
+        setButtonDisabled(false)
+      }
+    },100)
+  },[stt,edt]);
+  //!Presale Time
+
+
     
   useEffect(()=>{
     loadBlockchainData()
@@ -258,39 +289,47 @@ const Cart = () => {
     setClaimToken(event.target.value)
   }
 
-  const eth = [{tokenPrice:payInput, crypto:currencys, toETH:tokenETH, userAccount:account, quant:1}]
+  const eth = [{tokenPrice:payInput, crypto:currencys, toETH:tokenETH, userAccount:account, quant:1}];
 
   const makePayment = async ()=>{
-    // const stripe = await loadStripe(process.env.REACT_APP_STRIPE_PK_TEST);
-    bytokenTime()
+    const stripe = await loadStripe(process.env.REACT_APP_STRIPE_PK_TEST);
 
-    // const response = await axios.post(`${baseUrl}create-checkout-session`,{products:eth});
+    if(currentTime<stt){
+      const response = null;
+      toast.error("Presale is not start")
+    } else if(currentTime>edt){
+      setButtonDisabled(true)
+      // setErrorMessage("Presale is end")
+      toast.error("Presale is end")
+    } else{
+      setButtonDisabled(false)
+      const response = await axios.post(`${baseUrl}create-checkout-session`,{products:eth});
+      const session = await response.data;
+    // console.log(session);
 
-    // const session = await response.data;
-    // // console.log(session);
-
-    // const result = stripe.redirectToCheckout({
-    //     sessionId:session.id,
-    // });
+    const result = stripe.redirectToCheckout({
+        sessionId:session.id,
+    });
   
-    // if(result.error){
-    //     console.log(result.error);
-    // }
+    if(result.error){
+        console.log(result.error);
+    }
+    }
   };
 
+  if(buttonDisabled === false){
+    makePayment()
+  }
+  
   return (
     <div className='claim-container'>
         <div className='claim-content'>
             <h2 className='claim-title'>
             {"Join the "}
              <span className="gary-bold">$PAY</span>
-            {/* {" Presale Now"} */}
-            {/* {startPresaleTime && startPresaleTime } */}
-            {/* <p>{startPresaleTime}</p> */}
             </h2>
-            {/* {endPresaleTime} */}
-            <CartTime startTime={startPresaleTime} endTime={endPresaleTime}/>
-            {!errorMessage === "" ? errorMessage:""}
+            {/* <CartTime startTime={startPresaleTime} endTime={endPresaleTime}/> */}
+            {errorMessage === "" ? "":errorMessage}
             <div className='select-button-container'>
               <button className="claim-button select-button claim-button-active" scale="md" id="btn-eth" onClick={()=>setCurrencys("ETH")}> ETH</button>
               <button className="claim-button select-button" scale="md" id="btn-usdt" onClick={()=>setCurrencys("USDT")}> USDT</button>
@@ -320,12 +359,9 @@ const Cart = () => {
             </div>
 
 
-            <button className="claim-button" scale="md" id="claim" disabled="" 
+            <button className="claim-button" scale="md" id="claim" 
+            disabled={buttonDisabled}
             style={{"margin-top": "40px;"}} onClick={()=>pay_with_meta()} >PAY</button>
-            {/* <a href='https://global-stg.transak.com/?apikey=8f020938-fd46-4977-bc01-059542dc79b7' 
-            // target="_blank"
-            rel="noreferrer" className="claim-button" scale="md" id="claim" disabled="" 
-            style={{"margin-top": "40px;"}}>Buy To Card</a> */}
 
            <div className='pay-container'>
               <span className='pay-label1'>Your account ID</span>
@@ -342,7 +378,7 @@ const Cart = () => {
               </div>
             </div>
 
-            {payInput && account == ""?<button className="claim-button" scale="md" id="claim" disabled={!buttonDisabled} 
+            {!payInput == "" && !account == ""?<button className="claim-button" scale="md" id="claim" disabled={!buttonDisabled} 
             style={{"margin-top": "40px;"}} onClick={()=>makePayment()}>Buy With Card ST</button>:<button className="claim-button" scale="md" id="claim" disabled={buttonDisabled} 
             style={{"margin-top": "40px;"}} onClick={()=>makePayment()}>Buy With Card ST</button>}
 

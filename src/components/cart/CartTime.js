@@ -1,36 +1,21 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import "./Cart.css"
 
 const CartTime = ({startTime,endTime}) => {
   // const [time,setTime] = useState(duration);
   // console.log(startTime,endTime,"====....");
-  let bigToNum = Number(startTime);
-  let stt = new Date(bigToNum)
-  console.log(stt,"===>>>");
-
-  // useEffect(()=>{
-  //   setTimeout(()=>{
-  //     setTime(time - 1000)
-  //   },1000)
-  // },[time]);
-
-  // const getTmie = (millisecond)=>{
-  //   let total_seconds = parseInt(Math.floor(millisecond / 1000))
-  //   let total_minutes = parseInt(Math.floor(total_seconds / 60))
-  //   let total_hours = parseInt(Math.floor(total_minutes / 60))
-  //   let day = parseInt(Math.floor(total_hours / 60))
-
-  //   let seconds = parseInt(total_seconds % 60)
-  //   let minutes = parseInt(total_minutes % 60)
-  //   let hours = parseInt(total_hours % 24)
-
-  //   return `Days: ${day} Hours: ${hours} MINUTES: ${minutes} SECONDS: ${seconds}`
-  // }
+  let bigToNumST = Number(startTime);
+  let bigToNumED = Number(endTime);
+  let stt = new Date(bigToNumST*1000)
+  let edt = new Date(bigToNumED*1000)
+  console.log(stt,"===>>>Start Time");
+  console.log(edt,"===>>>End Time");
 
   return (
     // <div className='utc-date'>{getTmie(time)}</div>
-    // <div>{startTime}</div>
-    <></>
+    // <div>{stt}</div>
+    <>
+    </>
   )
 }
 
