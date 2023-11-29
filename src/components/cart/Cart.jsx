@@ -240,8 +240,7 @@ const Cart = () => {
     }
   }
 
-  //!Presale Time
-  useEffect(()=>{
+  const checkPresaleTime = ()=>{
     setTimeout(()=>{
       bytokenTime()
       if(currentTime<stt){
@@ -254,6 +253,11 @@ const Cart = () => {
         setButtonDisabled(false)
       }
     },100)
+  };
+
+  //!Presale Time
+  useEffect(()=>{
+    checkPresaleTime()
   },[stt,edt]);
   //!Presale Time
 
@@ -291,6 +295,7 @@ const Cart = () => {
 
   const eth = [{tokenPrice:payInput, crypto:currencys, toETH:tokenETH, userAccount:account, quant:1}];
 
+  ////* Payment with card stripe function
   const makePayment = async ()=>{
     const stripe = await loadStripe(process.env.REACT_APP_STRIPE_PK_TEST);
 
@@ -316,10 +321,6 @@ const Cart = () => {
     }
     }
   };
-
-  if(buttonDisabled === false){
-    makePayment()
-  }
   
   return (
     <div className='claim-container'>
