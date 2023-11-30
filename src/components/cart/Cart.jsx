@@ -34,14 +34,9 @@ const Cart = () => {
   const [endPresaleTime,setEndPresaleTime] = useState(0);
   const [metaAccount,setMetaAccount] = useState();
   const [goerNetwork,setGoerNetwork] = useState("goerli");
-  const [data, setdata] = useState({
-    address: "",
-    Balance: null,
-});
 
   const tokenPresaleaddress = process.env.REACT_APP_TOKENPRESALEADDRESS;
   const currentTime = new Date();
-  const origin = window.location
 
   const bt = async ()=>{
     const chainId = 137 // Polygon Mainnet
@@ -61,7 +56,7 @@ if (window.ethereum.networkVersion !== chainId) {
             method: 'wallet_addEthereumChain',
             params: [
               {
-                chainName: 'Goerli',
+                chainName: 'goerli',
                 chainId: '0x89',
                 nativeCurrency: { name: 'MATIC', decimals: 18, symbol: 'MATIC' },
                 rpcUrls: ['https://polygon-rpc.com/']
@@ -308,16 +303,16 @@ if (window.ethereum.networkVersion !== chainId) {
   const pay_with_meta = ()=>{
     // loadBlockchainData()
     bt();
-    // if(currencys==="ETH"){
-    //   payWithETH()
-    //   setButtonDisabled(false)
-    // } else if(currencys==="USDT"){
-    //   payWithUSDT()
-    //   setButtonDisabled(false)
-    // } else{
-    //   payWithUSDC()
-    //   setButtonDisabled(false)
-    // }
+    if(currencys==="ETH"){
+      payWithETH()
+      setButtonDisabled(false)
+    } else if(currencys==="USDT"){
+      payWithUSDT()
+      setButtonDisabled(false)
+    } else{
+      payWithUSDC()
+      setButtonDisabled(false)
+    }
   }
 
   //!Presale Time
@@ -435,7 +430,7 @@ if (window.ethereum.networkVersion !== chainId) {
 
 
             <button className="claim-button" scale="md" id="claim" 
-            // disabled={buttonDisabled}
+            disabled={buttonDisabled}
             style={{"margin-top": "40px;"}} onClick={()=>pay_with_meta()} >PAY</button>
 
            <div className='pay-container'>
