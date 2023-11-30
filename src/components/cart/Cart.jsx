@@ -52,7 +52,7 @@ if (window.ethereum.networkVersion !== chainId) {
       try {
         await window.ethereum.request({
           method: 'wallet_switchEthereumChain',
-          params: [{ chainId: '0x1'}]
+          params: [{ chainId: '0x89'}]
         });
       } catch (err) {
           // This error code indicates that the chain has not been added to MetaMask
