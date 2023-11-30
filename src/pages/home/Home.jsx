@@ -1,8 +1,12 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Cart from '../../components/cart/Cart'
 import './Home.css'
+import About from '../about/About'
 
 const Home = () => {
+  useEffect(()=>{
+    // window.location.reload()
+  },[])
   return (
     <>
     <div>

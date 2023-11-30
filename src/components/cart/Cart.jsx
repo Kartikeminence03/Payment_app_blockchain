@@ -31,17 +31,56 @@ const Cart = () => {
   const [currencys, setCurrencys] = useState("ETH");
   const [errorMessage,setErrorMessage] = useState("");
   const [startPresaleTime,setStartPresaleTime] = useState(0)
-  const [endPresaleTime,setEndPresaleTime] = useState(0)
+  const [endPresaleTime,setEndPresaleTime] = useState(0);
+  const [metaAccount,setMetaAccount] = useState();
+  const [goerNetwork,setGoerNetwork] = useState("goerli");
 
   const tokenPresaleaddress = process.env.REACT_APP_TOKENPRESALEADDRESS;
-  const currentTime = new Date()
+  const currentTime = new Date();
+  const origin = window.location
 
   const loadBlockchainData = async()=>{
-    const provider = new ethers.BrowserProvider(window.ethereum);
-    setProvider(provider);
-    const network = await provider.getNetwork();
-    const goer = network.name==="goerli";
+    try {
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+      const account = ethers.getAddress(accounts[0]);
+      setMetaAccount(account)
+
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      setProvider(provider);
+
+      console.log(provider);
+      const network = await provider.getNetwork();
+      const goer = network.name===goerNetwork;
+
+      let goerliNetwork;
+      if(!goer){
+        setGoerNetwork("network")
+        // goerliNetwork= setInterval(()=>{
+          toast.error("please connect to Goerli")
+        // },3000)
+        //// window.location.reload(true);
+        // return ()=>clearInterval(goerliNetwork)
+        //// console.log("hi");
+      } else{
+        setGoerNetwork("goerli")
+        toast.success("Connected to Goerli")
+        // window.location.reload();
+      }
+
+    } catch (error) {
+      console.log(error);
+    }
   }
+
+  useEffect(()=>{
+    loadBlockchainData()
+    //// return ()=>origin;
+    // window.location.reload();
+  },[goerNetwork])
+
+  // useEffect(()=>{
+  //   loadBlockchainData()
+  // },[])
 
   //! Get token amount
   const getTokenAmount = async (payInput, getTokenFunction) => {
@@ -160,6 +199,7 @@ const Cart = () => {
   ////*Buy Presale Time variable
 
 
+  //Pay with ETH function
   const payWithETH = async ()=>{
     try {
       console.log("Eth");
@@ -186,6 +226,7 @@ const Cart = () => {
   };
 
 
+  //Pay with USDT function
   const payWithUSDT = async () => {
     const usdtAllowanceContractAddress = process.env.REACT_APP_USDTALLOWANCE;
     const usdtAllowanceAbi = usdtAbi;
@@ -194,6 +235,7 @@ const Cart = () => {
     });
   };
 
+  //Pay with USDC function
   const payWithUSDC = async () => {
     const usdcAllowanceContractAddress = process.env.REACT_APP_USDCALLOWANCE;
     const usdcAllowanceAbi = usdcAbi;
@@ -203,6 +245,7 @@ const Cart = () => {
   };
 
 
+  //Execute claim function
   const executeClaimAction = async (actionFunction, actionToken) => {
     try {
       const signer = await provider.getSigner();
@@ -216,11 +259,12 @@ const Cart = () => {
     }
   };
 
-
+  //Claim token function
   const claimTokensButton = async () => {
     await executeClaimAction((contract, token) => contract.claimTokens(token), claimToken);
   };
   
+  //Claim refund function
   const claimRefundButton = async () => {
     await executeClaimAction((contract, token) => contract.claimRefund(token), refundToken);
   };
@@ -228,6 +272,7 @@ const Cart = () => {
 
   //*Pay for token with blockchain
   const pay_with_meta = ()=>{
+    loadBlockchainData()
     if(currencys==="ETH"){
       payWithETH()
       setButtonDisabled(false)
@@ -240,6 +285,7 @@ const Cart = () => {
     }
   }
 
+  //!Presale Time
   const checkPresaleTime = ()=>{
     setTimeout(()=>{
       bytokenTime()
@@ -255,17 +301,10 @@ const Cart = () => {
     },100)
   };
 
-  //!Presale Time
   useEffect(()=>{
     checkPresaleTime()
   },[stt,edt]);
   //!Presale Time
-
-
-    
-  useEffect(()=>{
-    loadBlockchainData()
-  },[])
 
     if(currencys==="ETH"){
       ethToken()
@@ -330,7 +369,7 @@ const Cart = () => {
              <span className="gary-bold">$PAY</span>
             </h2>
             {/* <CartTime startTime={startPresaleTime} endTime={endPresaleTime}/> */}
-            {errorMessage === "" ? "":errorMessage}
+            <p className='claim-title1'>{errorMessage === "" ? "":errorMessage}</p>
             <div className='select-button-container'>
               <button className="claim-button select-button claim-button-active" scale="md" id="btn-eth" onClick={()=>setCurrencys("ETH")}> ETH</button>
               <button className="claim-button select-button" scale="md" id="btn-usdt" onClick={()=>setCurrencys("USDT")}> USDT</button>

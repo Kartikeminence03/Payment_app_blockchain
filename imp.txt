@@ -929,4 +929,36 @@ export default Cart
 {/* <a href='https://global-stg.transak.com/?apikey=8f020938-fd46-4977-bc01-059542dc79b7' 
             // target="_blank"
             rel="noreferrer" className="claim-button" scale="md" id="claim" disabled="" 
-            style={{"margin-top": "40px;"}}>Buy To Card</a> */}
+style={{"margin-top": "40px;"}}>Buy To Card</a> */}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+There are a few ways to show the MetaMask network pop up in React JS. One way is to use the MetaMask SDK. 
+To do this, you will need to install the SDK and then import it into your React project. 
+Once the SDK is imported, you can use it to call the eth_requestAccounts method. 
+This method will cause a MetaMask popup to appear, 
+which will prompt the user to connect their MetaMask wallet to your React app.
+
+
+
+Another way to show the MetaMask network pop up is to use the ethereum object. 
+To do this, you will need to check if MetaMask is installed and then call the ethereum.request() method. 
+This method will also cause a MetaMask popup to appear, but it will not prompt the user to connect their 
+MetaMask wallet.
+
+
+Finally, you can also show the MetaMask network pop up by using the window.ethereum object. 
+To do this, you will need to check if MetaMask is installed and then call the window.ethereum.request()
+method. This method will also cause a MetaMask popup to appear, but it will not prompt the user to connect 
+their MetaMask wallet.

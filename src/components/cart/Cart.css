@@ -52,6 +52,22 @@
     line-height: 1.5;
 }
 
+
+.claim-title1 {
+    font-family: Montserrat;
+    text-align: center;
+}
+
+.claim-title1 {
+    -webkit-text-fill-color: transparent;
+    background: linear-gradient(270deg,#0f0,#0f0 50%,#0f0);
+    background-clip: text;
+    /* -webkit-background-clip: text; */
+    font-size: 1.0em;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
 .gary-bold {
     font-family: ExtraBold;
     font-size: 1.2em;
