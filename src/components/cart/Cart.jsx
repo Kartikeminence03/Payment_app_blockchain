@@ -61,7 +61,7 @@ if (window.ethereum.networkVersion !== chainId) {
             method: 'wallet_addEthereumChain',
             params: [
               {
-                chainName: 'Polygon Mainnet',
+                chainName: 'Goerli',
                 chainId: '0x89',
                 nativeCurrency: { name: 'MATIC', decimals: 18, symbol: 'MATIC' },
                 rpcUrls: ['https://polygon-rpc.com/']
