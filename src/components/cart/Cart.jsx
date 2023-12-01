@@ -34,7 +34,9 @@ const Cart = () => {
   const [endPresaleTime,setEndPresaleTime] = useState(0);
   const [metaAccount,setMetaAccount] = useState();
   const [goerNetwork,setGoerNetwork] = useState("goerli");
-  const [presaleId, setPresaleId] = useState()
+  const [presaleId, setPresaleId] = useState();
+  const [tokensToSell, setTokensToSell] = useState()
+  const [inSale, setInSale] = useState()
 
   const tokenPresaleaddress = process.env.REACT_APP_TOKENPRESALEADDRESS;
   const currentTime = new Date();
@@ -209,6 +211,7 @@ if (window.ethereum.networkVersion !== chainId) {
     const recieveId = await tokenPresaleContractWithSigner.presaleId();
     setPresaleId(recieveId)
   };
+
   ////*Buy Presale Time function
   const bytokenTime = async ()=>{
     try {
@@ -219,9 +222,13 @@ if (window.ethereum.networkVersion !== chainId) {
       const RecieveTime = await tokenPresaleContractWithSigner.presale(presaleId)
       const startTime = RecieveTime[0];
       const endTime = RecieveTime[1];
+      const tokensToSell = RecieveTime[3];
+      const inSale = RecieveTime[4]
       setStartPresaleTime(startTime);
-      setEndPresaleTime(endTime)
-      // console.log(RecieveTime[0],"====>>>>");
+      setEndPresaleTime(endTime);
+      setTokensToSell(await tokensToSell);
+      setInSale(await inSale)
+      // console.log(tokensToSell,inSale,"====>>>>");
     } catch (error) {
       console.error(error)
     }
@@ -245,6 +252,17 @@ if (window.ethereum.networkVersion !== chainId) {
   const edHours =  edt.getHours();
   const edMintes = edt.getMinutes();
   ////*Timing for Cart End time
+
+  ////*tokens To Sell and  inSale
+  let bigTokenToSell = Number(tokensToSell);
+  let bigInSale = Number(inSale);
+  let total = bigTokenToSell * bigInSale / 100;
+
+  // Round the result to 2 decimal places (you can adjust the number)
+  let roundedTotal = parseInt(total);
+
+  console.log(roundedTotal.toFixed("2"));
+  ////*tokens To Sell and  inSale
 
   //Pay with ETH function
   const payWithETH = async ()=>{
