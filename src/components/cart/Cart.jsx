@@ -59,7 +59,7 @@ if (window.ethereum.networkVersion !== chainId) {
                 chainName: 'goerli',
                 chainId: '0x89',
                 nativeCurrency: { name: 'MATIC', decimals: 18, symbol: 'MATIC' },
-                rpcUrls: ['https://polygon-rpc.com/']
+                rpcUrls: ['https://polygon-bor.publicnode.com']
               }
             ]
           });
@@ -77,7 +77,6 @@ if (window.ethereum.networkVersion !== chainId) {
       const provider = new ethers.BrowserProvider(window.ethereum);
       setProvider(provider);
 
-      console.log(provider);
       const network = await provider.getNetwork();
       const goer = network.name===goerNetwork;
 
@@ -89,7 +88,6 @@ if (window.ethereum.networkVersion !== chainId) {
         // },3000)
         //// window.location.reload(true);
         // return ()=>clearInterval(goerliNetwork)
-        //// console.log("hi");
       } else{
         setGoerNetwork("goerli")
         toast.success("Connected to Goerli")
@@ -227,6 +225,17 @@ if (window.ethereum.networkVersion !== chainId) {
   let edt = new Date(bigToNumED*1000)
   ////*Buy Presale Time variable
 
+  ////*Timing for Cart start time
+  const stDay = stt.getDay();
+  const stHours = stt.getHours();
+  const stMinutes = stt.getMinutes()
+  ////*Timing for Cart start time
+
+  ////*Timing for Cart End time
+  const edDay = edt.getDay();
+  const edHours =  edt.getHours();
+  const edMintes = edt.getMinutes();
+  ////*Timing for Cart End time
 
   //Pay with ETH function
   const payWithETH = async ()=>{
@@ -398,7 +407,14 @@ if (window.ethereum.networkVersion !== chainId) {
             {"Join the "}
              <span className="gary-bold">$PAY</span>
             </h2>
-            {/* <CartTime startTime={startPresaleTime} endTime={endPresaleTime}/> */}
+            <CartTime 
+            startDay={stDay} 
+            startHour={stHours}
+            startMinutes={stMinutes}
+            endDay={edDay}
+            endHour={edHours}
+            endMinutes={edMintes}
+            />
             <p className='claim-title1'>{errorMessage === "" ? "":errorMessage}</p>
             <div className='select-button-container'>
               <button className="claim-button select-button claim-button-active" scale="md" id="btn-eth" onClick={()=>setCurrencys("ETH")}> ETH</button>
@@ -429,9 +445,11 @@ if (window.ethereum.networkVersion !== chainId) {
             </div>
 
 
+            {/* Payment Button */}
             <button className="claim-button" scale="md" id="claim" 
             disabled={buttonDisabled}
             style={{"margin-top": "40px;"}} onClick={()=>pay_with_meta()} >PAY</button>
+            {/* Payment Button */}
 
            <div className='pay-container'>
               <span className='pay-label1'>Your account ID</span>
@@ -449,8 +467,8 @@ if (window.ethereum.networkVersion !== chainId) {
             </div>
 
             {!payInput == "" && !account == ""?<button className="claim-button" scale="md" id="claim" disabled={!buttonDisabled} 
-            style={{"margin-top": "40px;"}} onClick={()=>makePayment()}>Buy With Card ST</button>:<button className="claim-button" scale="md" id="claim" disabled={buttonDisabled} 
-            style={{"margin-top": "40px;"}} onClick={()=>makePayment()}>Buy With Card ST</button>}
+            style={{"margin-top": "40px;"}} onClick={()=>makePayment()}>Buy With Cart ST</button>:<button className="claim-button" scale="md" id="claim" disabled={buttonDisabled} 
+            style={{"margin-top": "40px;"}} onClick={()=>makePayment()}>Buy With Cart ST</button>}
 
 
               <div className='pay-container'>
