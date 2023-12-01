@@ -34,6 +34,7 @@ const Cart = () => {
   const [endPresaleTime,setEndPresaleTime] = useState(0);
   const [metaAccount,setMetaAccount] = useState();
   const [goerNetwork,setGoerNetwork] = useState("goerli");
+  const [presaleId, setPresaleId] = useState()
 
   const tokenPresaleaddress = process.env.REACT_APP_TOKENPRESALEADDRESS;
   const currentTime = new Date();
@@ -201,13 +202,21 @@ if (window.ethereum.networkVersion !== chainId) {
     }
   };
 
+  const tokenPresaleId = async ()=>{
+    const signer = await provider.getSigner();
+    const tokenPresaleContract = new ethers.Contract(tokenPresaleaddress, tokenPresale.abi, provider);
+    const tokenPresaleContractWithSigner = tokenPresaleContract.connect(signer);
+    const recieveId = await tokenPresaleContractWithSigner.presaleId();
+    setPresaleId(recieveId)
+  };
   ////*Buy Presale Time function
   const bytokenTime = async ()=>{
     try {
+      await tokenPresaleId()
       const signer = await provider.getSigner();
       const tokenPresaleContract = new ethers.Contract(tokenPresaleaddress, tokenPresale.abi, provider);
       const tokenPresaleContractWithSigner = tokenPresaleContract.connect(signer);
-      const RecieveTime = await tokenPresaleContractWithSigner.presale(1)
+      const RecieveTime = await tokenPresaleContractWithSigner.presale(presaleId)
       const startTime = RecieveTime[0];
       const endTime = RecieveTime[1];
       setStartPresaleTime(startTime);
@@ -353,7 +362,7 @@ if (window.ethereum.networkVersion !== chainId) {
       usdcToken()
     }
 
-  const payment_fun = async(event)=>{
+  const payment_fun = (event)=>{
     const inputpay = document.getElementById("pay-input").value;
     const fiatPay = Number(inputpay)
     setPayInput(fiatPay)
@@ -407,6 +416,7 @@ if (window.ethereum.networkVersion !== chainId) {
             {"Join the "}
              <span className="gary-bold">$PAY</span>
             </h2>
+            <p className='claim-title1'>{errorMessage === "" ? "":errorMessage}</p>
             <CartTime 
             startDay={stDay} 
             startHour={stHours}
@@ -415,7 +425,6 @@ if (window.ethereum.networkVersion !== chainId) {
             endHour={edHours}
             endMinutes={edMintes}
             />
-            <p className='claim-title1'>{errorMessage === "" ? "":errorMessage}</p>
             <div className='select-button-container'>
               <button className="claim-button select-button claim-button-active" scale="md" id="btn-eth" onClick={()=>setCurrencys("ETH")}> ETH</button>
               <button className="claim-button select-button" scale="md" id="btn-usdt" onClick={()=>setCurrencys("USDT")}> USDT</button>
