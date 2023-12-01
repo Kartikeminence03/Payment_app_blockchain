@@ -257,10 +257,7 @@ if (window.ethereum.networkVersion !== chainId) {
   let bigTokenToSell = Number(tokensToSell);
   let bigInSale = Number(inSale);
   let total = bigTokenToSell * bigInSale / 100;
-
-  // Round the result to 2 decimal places (you can adjust the number)
   let roundedTotal = parseInt(total);
-
   console.log(roundedTotal.toFixed("2"));
   ////*tokens To Sell and  inSale
 
