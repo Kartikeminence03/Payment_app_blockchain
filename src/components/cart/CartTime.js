@@ -5,6 +5,8 @@ const CartTime = ({startDay,startHour,startMinutes,endDay,endHour,endMinutes}) =
   const [days, setDays] = useState(startDay);
   const [hours, setHours] = useState(startHour);
   const [minutes, setMinutes] = useState(startMinutes);
+  
+  // console.log(startDay,startHour,startMinutes,endDay,endHour,endMinutes);
 
   const calculateRemainingTime = () => {
     const totalSeconds =
@@ -27,7 +29,7 @@ const CartTime = ({startDay,startHour,startMinutes,endDay,endHour,endMinutes}) =
   };
 
   useEffect(() => {
-    return calculateRemainingTime();
+     calculateRemainingTime();
   }, []);
 
   return (

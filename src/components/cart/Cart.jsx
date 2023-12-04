@@ -251,6 +251,12 @@ if (window.ethereum.networkVersion !== chainId) {
   const edMintes = edt.getMinutes();
   ////*Timing for Cart End time
 
+  // useEffect(()=>{
+  //   console.log('Time')
+  // },[stDay,
+  //   stHours,
+  //   stMinutes, edDay, edMintes,edHours])
+
   ////*tokens To Sell and  inSale
   let bigTokenToSell = Number(tokensToSell);
   let bigInSale = Number(inSale);
