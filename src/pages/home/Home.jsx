@@ -4,6 +4,7 @@ import './Home.css'
 import { useState } from 'react';
 import axios from 'axios';
 import { baseUrl } from '../../backend_Url/baseUrl';
+import { toast } from 'react-toastify';
 
 const style = {
   display: "inline-block",
@@ -12,6 +13,7 @@ const style = {
 
 const Home = () => {
   const [contact,setContact] = useState({firstName:"",lastName:"",phone:"",perEmail:"",digiMessage:""});
+  const [buttonDisabled, setButtonDisabled] = useState(false);
 
   const messageInput = (event)=>{
     console.log(event.target.value);
@@ -25,11 +27,13 @@ const Home = () => {
       });
 
       const message = await response.data;
-      console.log(message);
+      toast.success(message.message)
     } catch (error) {
-      console.log(error);
+      toast.error(error)
     }
   };
+
+  const {firstName,lastName,phone,perEmail,digiMessage} = contact;
 
   return (
     <>
@@ -117,15 +121,25 @@ const Home = () => {
                 />
               </div>
             </div>
-            <button
+            {!firstName == "" && !lastName == "" && !perEmail == "" && !phone == "" && !digiMessage == ""? <button
               className="claim-button"
               scale="md"
               id="claim"
               style={{ "margin-top": "40px;" }}
+              disabled={buttonDisabled}
               onClick={() => sendMessage()}
             >
               Submit
-            </button>
+            </button>: <button
+              className="claim-button"
+              scale="md"
+              id="claim"
+              style={{ "margin-top": "40px;" }}
+              disabled={!buttonDisabled}
+              onClick={() => sendMessage()}
+            >
+              Submit
+            </button>}
           </div>
         </div>
     </div>
