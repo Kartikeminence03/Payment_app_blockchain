@@ -147,7 +147,6 @@ if (window.ethereum.networkVersion !== chainId) {
 
   //*Get token with USDT
   const usdtToken =async ()=>{
-    // console.log("USDT");
     const inputpay = document.getElementById("pay-input")?.value;
     const payDsoulUSDT = Number(inputpay) * 10 ** 6;
     await getTokenAmount(payDsoulUSDT, async (contract, payValue) => {
@@ -158,7 +157,6 @@ if (window.ethereum.networkVersion !== chainId) {
 
   //*Get token with USDC
   const usdcToken = async()=>{
-    // console.log("USDC");
     const inputpay = document.getElementById("pay-input")?.value;
     const payDsoulUSDC = Number(inputpay) * 10 ** 6;
     await getTokenAmount(payDsoulUSDC, async (contract, payValue) => {
@@ -170,7 +168,7 @@ if (window.ethereum.networkVersion !== chainId) {
   //!Pay for token
   const payWithToken = async (tokenSymbol, allowanceContractAddress, allowanceAbi, buyFunction) => {
     try {
-      console.log(tokenSymbol);
+      // console.log(tokenSymbol);
       const signer = await provider.getSigner();
       const inputpay = document.getElementById("pay-input")?.value;
       const payAmount = Number(inputpay) * 10 ** 6;
@@ -258,7 +256,7 @@ if (window.ethereum.networkVersion !== chainId) {
   let bigInSale = Number(inSale);
   let total = bigTokenToSell * bigInSale / 100;
   let roundedTotal = parseInt(total);
-  console.log(roundedTotal.toFixed("2"));
+  // console.log(roundedTotal.toFixed("2"));
   ////*tokens To Sell and  inSale
 
   //Pay with ETH function
