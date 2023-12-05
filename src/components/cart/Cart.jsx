@@ -251,17 +251,16 @@ if (window.ethereum.networkVersion !== chainId) {
   const edMintes = edt.getMinutes();
   ////*Timing for Cart End time
 
-  // useEffect(()=>{
-  //   console.log('Time')
-  // },[stDay,
-  //   stHours,
-  //   stMinutes, edDay, edMintes,edHours])
-
   ////*tokens To Sell and  inSale
   let bigTokenToSell = Number(tokensToSell);
   let bigInSale = Number(inSale);
-  let total = bigTokenToSell * bigInSale / 100;
-  let roundedTotal = parseInt(total);
+  let total = (bigTokenToSell / bigInSale) * 100;
+  // let roundedTotal = parseInt(total);
+  // let roundedTotal = total.toFixed(2);
+  // let roundedTotaltoSt =  roundedTotal.toString()
+  // const barNum = roundedTotaltoSt.slice(0,3)
+  console.log(total);
+
   // console.log(roundedTotal.toFixed("2"));
   ////*tokens To Sell and  inSale
 
