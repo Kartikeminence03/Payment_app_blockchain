@@ -1,44 +1,56 @@
-import React, { useEffect, useState } from 'react'
-import "./Cart.css"
+import React, { useEffect, useState } from 'react';
+import './Cart.css';
 
-const CartTime = ({startDay,startHour,startMinutes,endDay,endHour,endMinutes}) => {
-  const [days, setDays] = useState(startDay);
-  const [hours, setHours] = useState(startHour);
-  const [minutes, setMinutes] = useState(startMinutes);
-  
-  // console.log(startDay,startHour,startMinutes,endDay,endHour,endMinutes);
-
+const CartTime = ({ startDay, startHour, startMinutes, endDay, endHour, endMinutes }) => {
   const calculateRemainingTime = () => {
+    const interval = setInterval(() => {
+      setTimeRemaining((prevTime) => {
+        if (prevTime.totalSeconds > 0) {
+          const remainingSeconds = prevTime.totalSeconds - 1;
+          return {
+            totalSeconds: remainingSeconds,
+            days: Math.floor(remainingSeconds / (24 * 60 * 60)),
+            hours: Math.floor((remainingSeconds % (24 * 60 * 60)) / (60 * 60)),
+            minutes: Math.floor((remainingSeconds % (60 * 60)) / 60),
+          };
+        } else {
+          clearInterval(interval);
+          return prevTime;
+        }
+      });
+    }, 1000);
+
+    // Return a cleanup function to clear the interval
+    return () => clearInterval(interval);
+  };
+
+  const [timeRemaining, setTimeRemaining] = useState(() => {
     const totalSeconds =
       (endDay - startDay) * 24 * 60 * 60 +
       (endHour - startHour) * 60 * 60 +
       (endMinutes - startMinutes) * 60;
 
-    const interval = setInterval(() => {
-      if (totalSeconds > 0) {
-        const remainingSeconds = totalSeconds - 1;
-        setDays(Math.floor(remainingSeconds / (24 * 60 * 60)));
-        setHours(Math.floor((remainingSeconds % (24 * 60 * 60)) / (60 * 60)));
-        setMinutes(Math.floor((remainingSeconds % (60 * 60)) / 60));
-      } else {
-        clearInterval(interval);
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  };
+    return {
+      totalSeconds,
+      days: Math.floor(totalSeconds / (24 * 60 * 60)),
+      hours: Math.floor((totalSeconds % (24 * 60 * 60)) / (60 * 60)),
+      minutes: Math.floor((totalSeconds % (60 * 60)) / 60),
+    };
+  });
 
   useEffect(() => {
-     calculateRemainingTime();
+    const cleanupFunction = calculateRemainingTime();
+
+    return () => cleanupFunction();
   }, []);
 
   return (
     <div className='utc-date'>
       <p className='utc-date1'>
-        {days}D {"  "} {hours}H {"  "} {minutes}M
+        {timeRemaining.days}D {'  '} {timeRemaining.hours}H {'  '} {timeRemaining.minutes}M
       </p>
     </div>
   );
 };
 
-export default CartTime
+export default CartTime;

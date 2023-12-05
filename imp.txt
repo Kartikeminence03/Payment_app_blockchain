@@ -962,3 +962,28 @@ Finally, you can also show the MetaMask network pop up by using the window.ether
 To do this, you will need to check if MetaMask is installed and then call the window.ethereum.request()
 method. This method will also cause a MetaMask popup to appear, but it will not prompt the user to connect 
 their MetaMask wallet.
+
+
+
+
+
+
+
+
+
+
+
+ const totalSeconds =
+        (endDay - startDay) * 24 * 60 * 60 +
+        (endHour - startHour) * 60 * 60 +
+        (endMinutes - startMinutes) * 60-1;
+
+      if (totalSeconds > 0) {
+        const remainingSeconds = totalSeconds - 1;
+        setDays(Math.floor(remainingSeconds / (24 * 60 * 60)));
+        setHours(Math.floor((remainingSeconds % (24 * 60 * 60)) / (60 * 60)));
+        setMinutes(Math.floor((remainingSeconds % (60 * 60)) / 60));
+        // console.log("minutes",minutes);
+      } else {
+        clearInterval(interval);
+      }
