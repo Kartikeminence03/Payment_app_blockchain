@@ -51,7 +51,7 @@ const Cart = () => {
       try {
         await window.ethereum.request({
           method: 'wallet_switchEthereumChain',
-          params: [{ chainId: '0x89'}]
+          params: [{ chainId: '0x5'}]
         });
       } catch (err) {
           // This error code indicates that the chain has not been added to MetaMask
@@ -61,7 +61,7 @@ const Cart = () => {
             params: [
               {
                 chainName: 'goerli',
-                chainId: '0x89',
+                chainId: '0x5',
                 nativeCurrency: { name: 'MATIC', decimals: 18, symbol: 'MATIC' },
                 rpcUrls: ['https://polygon-bor.publicnode.com']
               }
@@ -105,7 +105,7 @@ const Cart = () => {
         window.location.reload();
       })
     }
-    loadBlockchainData()
+    return ()=>loadBlockchainData()
   },[goerNetwork])
 
   //! Get token amount
