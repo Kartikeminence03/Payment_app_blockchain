@@ -47,7 +47,7 @@ const Cart = () => {
     const provider = new ethers.BrowserProvider(window.ethereum);
       setProvider(provider);
 
-if (window.ethereum.networkVersion !== chainId) {
+    if (window.ethereum.networkVersion !== chainId) {
       try {
         await window.ethereum.request({
           method: 'wallet_switchEthereumChain',
@@ -80,7 +80,6 @@ if (window.ethereum.networkVersion !== chainId) {
 
       const provider = new ethers.BrowserProvider(window.ethereum);
       setProvider(provider);
-      console.log(provider);
 
       const network = await provider.getNetwork();
       const goer = network.name===goerNetwork;
@@ -93,7 +92,6 @@ if (window.ethereum.networkVersion !== chainId) {
         setGoerNetwork("goerli")
         toast.success("Connected to Goerli")
         ref.current = false
-        // window.location.reload();
       }
 
     } catch (error) {
@@ -102,18 +100,12 @@ if (window.ethereum.networkVersion !== chainId) {
   }
 
   useEffect(()=>{
-    loadBlockchainData()
     if(window.ethereum) {
       window.ethereum.on('chainChanged', () => {
         window.location.reload();
       })
-      window.ethereum.on('accountsChanged', () => {
-        window.location.reload();
-      })
-  }
-    //// return ()=>origin;
-    // window.location.reload();
-    // ref.current = window.location.reload(false);
+    }
+    loadBlockchainData()
   },[goerNetwork])
 
   //! Get token amount
@@ -172,7 +164,6 @@ if (window.ethereum.networkVersion !== chainId) {
   //!Pay for token
   const payWithToken = async (tokenSymbol, allowanceContractAddress, allowanceAbi, buyFunction) => {
     try {
-      // console.log(tokenSymbol);
       const signer = await provider.getSigner();
       const inputpay = document.getElementById("pay-input")?.value;
       const payAmount = Number(inputpay) * 10 ** 6;
@@ -198,7 +189,7 @@ if (window.ethereum.networkVersion !== chainId) {
       // console.error(error.message);
       let err  = error.message;
       let err1 = err.slice(21,44)
-      // console.log(err1);
+      console.log(err);
       if(err1){
         toast.error(err1)
         setButtonDisabled(true)
@@ -261,9 +252,9 @@ if (window.ethereum.networkVersion !== chainId) {
   let total = (bigTokenToSell / bigInSale) * 100;
   // let roundedTotal = parseInt(total);
   // let roundedTotal = total.toFixed(2);
-  // let roundedTotaltoSt =  roundedTotal.toString()
-  // const barNum = roundedTotaltoSt.slice(0,3)
-  // console.log(total);
+  let roundedTotaltoSt =  total.toString()
+  const barNum = roundedTotaltoSt.slice(0,9)
+  // console.log(barNum);
 
   // console.log(roundedTotal.toFixed("2"));
   ////*tokens To Sell and  inSale
@@ -384,7 +375,7 @@ if (window.ethereum.networkVersion !== chainId) {
       usdcToken()
     }
 
-  const payment_fun = (event)=>{
+  const payment_Input = (event)=>{
     const inputpay = document.getElementById("pay-input").value;
     const fiatPay = Number(inputpay)
     setPayInput(fiatPay)
@@ -459,7 +450,7 @@ if (window.ethereum.networkVersion !== chainId) {
                 <input 
                 scale="md" 
                 className="progress-input pay-input" 
-                onChange={payment_fun}
+                onChange={payment_Input}
                 id="pay-input" 
                 type='number'
                 value={payInput} 
@@ -478,7 +469,7 @@ if (window.ethereum.networkVersion !== chainId) {
 
             {/* Payment Button */}
             <button className="claim-button" scale="md" id="claim" 
-            disabled={buttonDisabled}
+            // disabled={buttonDisabled}
             style={{"margin-top": "40px;"}} onClick={()=>pay_with_meta()} >PAY</button>
             {/* Payment Button */}
 

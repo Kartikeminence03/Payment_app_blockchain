@@ -2,16 +2,18 @@ import React, { useEffect, useState } from 'react';
 import './Cart.css';
 
 const CartTime = ({ startDay, startHour, startMinutes, endDay, endHour, endMinutes }) => {
-  const totalSeconds =
+
+  const [timeRemaining, setTimeRemaining] = useState(()=>{
+    const totalSeconds =
       (endDay - startDay) * 24 * 60 * 60 +
       (endHour - startHour) * 60 * 60 +
       (endMinutes - startMinutes) * 60;
-  const [timeRemaining, setTimeRemaining] = useState({
+    return{
       totalSeconds,
       days: Math.floor(totalSeconds / (24 * 60 * 60)),
       hours: Math.floor((totalSeconds % (24 * 60 * 60)) / (60 * 60)),
       minutes: Math.floor((totalSeconds % (60 * 60)) / 60),
-  });
+  }});
 
   const calculateRemainingTime = () => {
     const interval = setInterval(() => {
@@ -37,7 +39,6 @@ const CartTime = ({ startDay, startHour, startMinutes, endDay, endHour, endMinut
 
   useEffect(() => {
     const cleanupFunction = calculateRemainingTime();
-    console.log("hi");
     return () => cleanupFunction();
     // calculateRemainingTime()
   }, [startMinutes]); // empty dependency array ensures the effect runs only once on mount
