@@ -1,5 +1,5 @@
 /* global BigInt */
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import "./Cart.css"
 import {loadStripe} from '@stripe/stripe-js';
 import axios from 'axios';
@@ -36,7 +36,8 @@ const Cart = () => {
   const [goerNetwork,setGoerNetwork] = useState("goerli");
   const [presaleId, setPresaleId] = useState();
   const [tokensToSell, setTokensToSell] = useState()
-  const [inSale, setInSale] = useState()
+  const [inSale, setInSale] = useState();
+  const ref = useRef(true);
 
   const tokenPresaleaddress = process.env.REACT_APP_TOKENPRESALEADDRESS;
   const currentTime = new Date();
@@ -79,21 +80,19 @@ if (window.ethereum.networkVersion !== chainId) {
 
       const provider = new ethers.BrowserProvider(window.ethereum);
       setProvider(provider);
+      console.log(provider);
 
       const network = await provider.getNetwork();
       const goer = network.name===goerNetwork;
 
-      let goerliNetwork;
       if(!goer){
         setGoerNetwork("network")
-        // goerliNetwork= setInterval(()=>{
           toast.error("please connect to Goerli")
-        // },3000)
-        //// window.location.reload(true);
-        // return ()=>clearInterval(goerliNetwork)
+          bt()
       } else{
         setGoerNetwork("goerli")
         toast.success("Connected to Goerli")
+        ref.current = false
         // window.location.reload();
       }
 
@@ -104,13 +103,18 @@ if (window.ethereum.networkVersion !== chainId) {
 
   useEffect(()=>{
     loadBlockchainData()
+    if(window.ethereum) {
+      window.ethereum.on('chainChanged', () => {
+        window.location.reload();
+      })
+      window.ethereum.on('accountsChanged', () => {
+        window.location.reload();
+      })
+  }
     //// return ()=>origin;
     // window.location.reload();
+    // ref.current = window.location.reload(false);
   },[goerNetwork])
-
-  // useEffect(()=>{
-  //   loadBlockchainData()
-  // },[])
 
   //! Get token amount
   const getTokenAmount = async (payInput, getTokenFunction) => {
@@ -222,8 +226,8 @@ if (window.ethereum.networkVersion !== chainId) {
       const endTime = RecieveTime[1];
       const tokensToSell = RecieveTime[3];
       const inSale = RecieveTime[4]
-      setStartPresaleTime(startTime);
-      setEndPresaleTime(endTime);
+      setStartPresaleTime(await startTime);
+      setEndPresaleTime(await endTime);
       setTokensToSell(await tokensToSell);
       setInSale(await inSale)
       // console.log(tokensToSell,inSale,"====>>>>");
@@ -259,7 +263,7 @@ if (window.ethereum.networkVersion !== chainId) {
   // let roundedTotal = total.toFixed(2);
   // let roundedTotaltoSt =  roundedTotal.toString()
   // const barNum = roundedTotaltoSt.slice(0,3)
-  console.log(total);
+  // console.log(total);
 
   // console.log(roundedTotal.toFixed("2"));
   ////*tokens To Sell and  inSale
